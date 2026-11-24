@@ -1,0 +1,14 @@
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro", system-ui, sans-serif;
+}
+
+::selection {
+  background-color: var(--selection-background, #000);
+  color: var(--selection-text, #fff);
+}
+
+.hero-copy :is(h1, p),
+.site-header:not([data-on-showcase]) {
+  --selection-background: #fff;
+  --selection-text: #000;
+}

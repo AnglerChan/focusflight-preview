@@ -1,0 +1,250 @@
+@property --shade-drop {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --window-entry {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+@property --window-reveal {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.deep-focus {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, .44fr) minmax(0, .56fr);
+  column-gap: clamp(20px, 4vw, 80px);
+  padding: calc(var(--header-top) + var(--header-height) + 12px) var(--content-left)
+    max(clamp(22px, 5dvh, 64px), env(safe-area-inset-bottom));
+  position: relative;
+  isolation: isolate;
+  height: 100dvh;
+  overflow: clip;
+  outline: none;
+  color: #f3f3f3;
+  --cabin-wall: #050609;
+  background: var(--cabin-wall);
+}
+
+.focus-window-stage {
+  grid-area: 1 / 2;
+  position: relative;
+  container-type: size;
+  pointer-events: none;
+}
+.porthole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  /* The visible trim occupies roughly three quarters of the canvas height. */
+  height: min(130cqh, 177cqw);
+  aspect-ratio: 912 / 1144;
+  pointer-events: none;
+  user-select: none;
+  --window-progress: calc(var(--window-reveal) * var(--window-entry));
+  opacity: calc(.14 + .86 * var(--window-entry));
+  transform: scale(calc(.965 + .035 * var(--window-progress)));
+  --shade-travel: 50%;
+  container-type: size;
+}
+/* The bright liner sends a low, warm reflection into the surrounding wall. */
+.porthole::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: max(152vw, 165%);
+  height: max(200dvh, 165%);
+  pointer-events: none;
+  opacity: calc(1 - .93 * var(--shade-drop));
+  background:
+    radial-gradient(ellipse 38cqw 41cqh at 41% 58%, rgb(134 119 91 / .52),
+      rgb(126 112 94 / .30) 65%, rgb(87 78 74 / .095) 120%, transparent 255%),
+    radial-gradient(ellipse 47cqw 50cqh at 59% 47%, rgb(85 100 126 / .38),
+      rgb(79 91 118 / .19) 77%, rgb(60 69 90 / .055) 155%, transparent 295%);
+}
+.porthole-frame { position: absolute; inset: 0; }
+.porthole-frame { width: 100%; height: 100%; }
+.porthole-still { display: none; }
+[data-static-porthole] .porthole-frame { visibility: hidden; }
+[data-static-porthole] .porthole-still {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: url("/focusflight-preview/porthole/cabin-open.webp") center / 100% 100% no-repeat;
+  transform: scale(calc(1 + 2 * var(--still-approach, 0)));
+}
+.porthole-still::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/focusflight-preview/porthole/cabin-closed.webp") center / 100% 100% no-repeat;
+  clip-path: inset(0 0 calc(74% * (1 - var(--shade-drop))) 0);
+  opacity: clamp(0, 24 * var(--shade-drop), 1);
+}
+
+.shade-control {
+  appearance: none;
+  position: absolute;
+  top: 24.6%;
+  left: 32%;
+  width: 35%;
+  height: max(44px, calc(5.6% + var(--shade-drop) * var(--shade-travel)));
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+}
+.shade-control:focus-visible { outline: none; }
+.porthole:has(.shade-control:focus-visible)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(26.6% + var(--shade-drop) * var(--shade-travel));
+  translate: -50% -50%;
+  width: 12%;
+  height: 2.4%;
+  border: 1.5px solid #e1e6ee;
+  border-radius: 50%;
+}
+.porthole[data-dragging] .shade-control { cursor: grabbing; }
+[data-focus-handoff] .shade-control { pointer-events: none; }
+.focus-copy {
+  --copy-progress: var(--type-progress);
+  grid-area: 1 / 1;
+  position: relative;
+  align-self: center;
+  pointer-events: none;
+}
+.focus-copy h2 {
+  display: grid;
+  margin: 0;
+  font: 500 clamp(28px, 3.5vw, 64px)/1.08 -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-stretch: 132%; /* SF Pro Expanded */
+  letter-spacing: -.032em;
+  color: #edeef0;
+  pointer-events: auto;
+}
+/* Both layers share the title's grid cell and wrap with the same measure. */
+.focus-copy h2 > [aria-hidden] { grid-area: 1 / 1; }
+.focus-title-glow {
+  align-self: start;
+  color: transparent;
+  opacity: clamp(0, (var(--type-progress) - .52) * 2.5, 1);
+  pointer-events: none;
+  user-select: none;
+}
+.focus-title-glow::before {
+  content: attr(data-title);
+  display: inline-block;
+  font-kerning: none;
+  text-shadow:
+    0 0 min(.065em, 5px) rgb(246 250 255 / .72),
+    0 0 min(.22em, 18px) rgb(204 222 244 / .54),
+    0 0 min(.52em, 44px) rgb(161 191 226 / .36);
+  opacity: .48;
+}
+@keyframes focus-title-breath {
+  0%, 100% { opacity: .32; }
+  46% { opacity: .94; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .focus-title-glow[data-visible]::before {
+    animation: focus-title-breath 7s var(--button-press) infinite;
+  }
+}
+.focus-description {
+  margin-top: clamp(14px, 1.6vw, 28px);
+  max-width: 32ch;
+  font-size: var(--intro-font-size);
+}
+.focus-description p {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -.014em;
+  color: #b9bec8;
+  text-wrap: pretty;
+  pointer-events: auto;
+}
+.focus-description strong {
+  color: #dce0e6;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.focus-copy :is(h2, p) { --type-progress: var(--copy-progress); }
+
+@media (max-width: 800px) {
+  .deep-focus {
+    column-gap: clamp(14px, 3vw, 24px);
+    padding-inline-end: max(4.5vw, env(safe-area-inset-right));
+  }
+  .focus-copy h2 { font-size: clamp(23px, 5.2vw, 36px); }
+  .focus-description {
+    margin-top: 12px;
+  }
+}
+@media (max-width: 700px) and (orientation: portrait) {
+  .deep-focus {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    row-gap: 12px;
+  }
+  .focus-window-stage { grid-area: 2 / 1; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .deep-focus { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+}
+@keyframes porthole-arrival {
+  from { --window-entry: 0; }
+  to { --window-entry: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .deep-focus[data-anchor-entry] .porthole { animation: porthole-arrival 1.6s var(--button-press) both; }
+}
+
+.site-header[data-on-focus] { color: #f1f5fc; text-shadow: none; }
+[data-focus-handoff] .deep-focus {
+  z-index: 3;
+  transform: translateY(var(--focus-offset));
+  pointer-events: none;
+  mask-image: linear-gradient(to top,
+    black var(--focus-edge),
+    rgb(0 0 0 / .9) calc(var(--focus-edge) + 20%),
+    rgb(0 0 0 / .5) calc(var(--focus-edge) + 50%),
+    rgb(0 0 0 / .1) calc(var(--focus-edge) + 80%),
+    transparent calc(var(--focus-edge) + 100%));
+}
+[data-focus-handoff] .showcase {
+  background-color: color-mix(in srgb, #151922, var(--flight-page) calc(100% * var(--showcase-presence)));
+}
+[data-focus-handoff] .showcase::before,
+[data-focus-handoff] .showcase-stage { opacity: var(--showcase-presence); }
+[data-focus-handoff] .showcase-stage { filter: blur(calc(5px * var(--showcase-defocus))); }
+/* Bring the window into focus as the device silhouette clears. */
+[data-focus-handoff] .porthole {
+  opacity: calc(var(--window-entry) * var(--porthole-presence));
+}
+[data-focus-handoff] .porthole-frame { filter: blur(calc(2px * (1 - var(--window-reveal)))); }
+[data-focus-handoff] .showcase-intro,
+[data-focus-handoff] .showcase-devices {
+  z-index: 2;
+  opacity: var(--showcase-presence);
+  filter: blur(calc(4px * var(--showcase-defocus)));
+}
+[data-focus-handoff] .focus-copy {
+  --copy-progress: min(var(--type-progress), var(--title-reveal));
+  opacity: var(--return-copy, 1);
+}
+[data-focus-handoff] .showcase:focus { outline: none; }
