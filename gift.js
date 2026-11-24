@@ -58,7 +58,7 @@ export function setupGiftDescent(download, gift, slides, runway, windowFlight, e
     reader.addEventListener(event, e => e.stopPropagation());
   }
 
-  for (const line of content.querySelectorAll(".download-label, .download-copy h2, .download-copy p")) {
+  for (const line of content.querySelectorAll(".download-label, .download-copy h2, .download-copy p:not(.download-count)")) {
     prepareCopy(line);
   }
 

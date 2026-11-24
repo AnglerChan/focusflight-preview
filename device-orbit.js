@@ -57,9 +57,9 @@ export function setupDeviceOrbit(stage, buttons, reducedMotion) {
     entryObserver.disconnect();
     handoffObserver.disconnect();
     for (const { poster, blurred, base } of posters) {
-      poster.srcset = `${base}.webp 1920w, ${base}-4k.webp 3840w`;
-      poster.src = `${base}.webp`;
-      blurred.src = `${base}-blur.webp`;
+      poster.srcset = `${base}.webp?v=apple-maps 1920w, ${base}-4k.webp?v=apple-maps 3840w`;
+      poster.src = `${base}.webp?v=apple-maps`;
+      blurred.src = `${base}-blur.webp?v=apple-maps`;
     }
   }
   const entryObserver = new IntersectionObserver(([entry]) => {

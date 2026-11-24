@@ -208,7 +208,7 @@ export function setupDevicePlayback(stage, buttons, reducedMotion, moveOrbit, mo
     const controller = device.loadController = new AbortController();
     const { signal } = controller;
     const cue = parkedCue;
-    const src = `${device.base}.${appleVideo ? "mov" : "webm?v=front-index"}`;
+    const src = `${device.base}.${appleVideo ? "mov" : "webm"}?v=apple-maps`;
     device.loading = (async () => {
       if (local) {
         if (ranges === undefined) {

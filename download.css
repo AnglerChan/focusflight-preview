@@ -107,6 +107,17 @@
   font-size: clamp(13px, 1.15vw, 17px);
 }
 
+.download-count-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.download-count-digit {
+  display: inline-grid;
+  vertical-align: top;
+  overflow: clip;
+}
+.download-count-digit > span { grid-area: 1 / 1; }
+
 /* Keep the sky and download content in their final viewport throughout the flight. */
 [data-window-flight] .deep-focus { translate: 0 var(--cabin-offset); }
 [data-window-flight] .download {
@@ -190,9 +201,9 @@
   .download-awards img + img { --cue: .415; }
   .sketch-ipad { --cue: .445; }
   .sketch-plane { --cue: .475; }
-  .download-copy .hero-actions a { --cue: .50; }
+  .download-copy :is(.hero-actions a, .download-count) { --cue: .50; }
   .download-copy .hero-actions a + a { --cue: .535; }
-  .download-copy .download-count { --cue: .55; }
+  .download-count { --defocus: 4px; }
   .star-south { --cue: .56; }
 
   .download-sketches img {
